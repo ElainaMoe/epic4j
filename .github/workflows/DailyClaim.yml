@@ -45,4 +45,4 @@ jobs:
         username = config['username']
         password = config['password']
         for i in range((len(username))):
-            os.system(f'docker run -d -e EMAIL={username[i]} -e PASSWORD={password[i]} -e LOG_LEVEL=debug --name epic4j huisunan/epic4j:latest')
+            os.system(f'docker run -d -e EMAIL={username[i]} -e PASSWORD={password[i]} -e LOG_LEVEL=debug --name epic4j{i} huisunan/epic4j:latest')
