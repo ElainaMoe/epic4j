@@ -27,7 +27,7 @@ jobs:
         python-version: 3.8
     - name: Install Environment
       run: |
-        sudo apt install docker-ce
+        sudo apt install docker -y
         docker pull huisunan/epic4j:latest
     # sudo apt install openjdk-8-jre -y
     - name: Run script
