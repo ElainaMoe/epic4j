@@ -1,0 +1,44 @@
+name: DailyClaim
+
+on: 
+  workflow_dispatch:
+  release:
+    types: [published]
+  push:
+    tags:
+    - 'v*'
+  #  branches: 
+  #    - master
+  schedule:
+    - cron: "0 2 * * *"
+  watch:
+    types: [started]
+   
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id  # 自己点的 start
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Set up Python #安装python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install Environment
+      run: |
+        sudo apt install docker-ce
+        docker pull huisunan/epic4j:latest
+    # sudo apt install openjdk-8-jre -y
+    - name: Run script
+      env:
+        config: ${{ secrets.config }}
+      shell: python
+      run: |
+        import os
+        import json
+        config = json.loads(os.environ.get('config'))
+        username = config['username']
+        password = config['password']
+        for i in (len(username)):
+            os.system(f'docker run -d -e EMAIL={username[i]} -e PASSWORD={password[i]} -e LOG_LEVEL=debug --name epic4j huisunan/epic4j:latest')
