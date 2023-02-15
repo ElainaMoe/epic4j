@@ -1,9 +1,16 @@
 # Epic4j
 
+
+# [一个更好的游戏领取项目](https://github.com/QIN2DIM/epic-awesome-gamer)推荐大家使用
+
+## 本项目可能要暂停维护了
+
+
 [Epic4j](https://github.com/huisunan/epic4j)|[EpicGamesClaimer](https://github.com/luminoleon/epicgames-claimer)
 
 > 免费领取Epic周免游戏，本项目由EpicGamesClaimer而来
 
+QQ交流群:551322748
 
 ## 开始
 
@@ -19,6 +26,10 @@
 
 ```shell
 java -jar -Depic.email=[你的账号] -Depic.password[你的密码] epic4j.jar 
+```
+使用cookie
+```shell
+java -jar -Depic.email=[你的账号] -Depic.password[你的密码] -Depic.cookiePath=[你的cookie路径]  epic4j.jar 
 ```
 
 ### Docker
@@ -40,8 +51,12 @@ docker run -d -e EMAIL=[你的邮箱] -e PASSWORD=[你的密码] -e COOKIE_PATH=
 [具体配置](#yaml)
 
 ```shell
+# 创建数据目录
 mkdir ~/epic4j
+# 创建配置文件
 vim ~/epic4j/application.yml
+# 创建持久卷,用来保存用户数据，再升级容器时保存用户数据
+docker volume create epic4jVolume
 ```
 
 application.yml的配置如下
@@ -57,7 +72,7 @@ epic:
 运行docker容器,挂载配置文件到/opt/epic4j/config下
 
 ```shell
-docker run -d -v ~/epic4j:/opt/epic4j/config --name myepic huisunan/epic4j:latest
+docker run -d -v ~/epic4j:/opt/epic4j/config -v epic4jVolume:/opt/epic4j/data --name myepic huisunan/epic4j:latest
 ```
 
 #### 多用户配置
@@ -66,6 +81,8 @@ docker run -d -v ~/epic4j:/opt/epic4j/config --name myepic huisunan/epic4j:lates
 
 ```yaml
 epic:
+  #开启自动更新,可选
+  auto-update: true
   # 开启多用户支持
   multi-user: true
   users:
@@ -87,8 +104,6 @@ epic:
   dataPath: ./data
   # 浏览器启动参数
   driverArgs:
-  # epic站点url
-  epicUrl: https://www.epicgames.com/store/en-US/
   # email邮箱地址
   email:
   # 密码
@@ -97,14 +112,6 @@ epic:
   headLess: true
   # browserVersion指定chromium的版本,可能有一定风险
   browser-version:
-  # checkLoginUrl epic登录判断api
-  check-login-url: https://www.epicgames.com/account/v2/ajaxCheckLogin
-  # userInfoUrl获取用户信息url
-  user-info-url: https://www.epicgames.com/account/v2/personal/ajaxGet?sessionInvalidated=true
-  # freeGameUrl免费游戏url
-  free-game-url: https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale={}&country={}&allowCountries={}
-  # storeUrl商店url
-  store-url: https://www.epicgames.com/store/en-US/p/{}
   # crontab表达式,不填写的情况下是每天程序启动的时分秒运行一次
   cron:
   # noSandbox非沙盒运行
@@ -117,8 +124,12 @@ epic:
   multi-user: false
   # 多用户信息
   users:
-  # 错误时截图,默认为false
-  error-screen-shoot: false
+  # 错误时截图,默认为true
+  error-screen-shoot: true
+  # 操作超时时间ms,默认30s
+  timeout: 30000
+  # 操作间隔ms,间隔越短,轮询越快,适当控制
+  interval: 100
 ```
 
 ### 环境变量
@@ -142,4 +153,13 @@ epic:
 |消息推送||
 |自动更新|✅|
 |多账号批量处理|✅|
+|可视化界面||
 
+## 获取cookie
+使用chrome浏览器安装[EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg)
+![](doc/EditThisCookie.png)
+
+获取网站的cookie
+![](doc/ExportCookie.png)
+
+新建文本文件保存cookie
